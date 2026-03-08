@@ -250,8 +250,9 @@ async function syncSession(filename, state, debug = false) {
     console.log(`  📄 ${filename}: ${messages.length} 条消息，新消息 ${newMessages.length} 条`);
   }
   
-  let pendingUserMessage = null;
-  let assistantMessages = [];
+  // 收集所有 user 和 assistant 消息，稍后配对
+  const userMessages = [];
+  const assistantMessages = [];
   
   for (const msg of newMessages) {
     let messageData = null;
@@ -268,31 +269,8 @@ async function syncSession(filename, state, debug = false) {
       continue;
     }
     
-    if (debug) {
-      console.log(`    消息角色：${role}`);
-    }
-    
     if (role === 'user') {
-      if (pendingUserMessage && assistantMessages.length > 0) {
-        const fullResponse = assistantMessages.map(m => extractAiResponse(m)).filter(Boolean).join('\n');
-        const userInput = extractUserInput(pendingUserMessage);
-        
-        if (userInput && !userInput.startsWith('/') && fullResponse) {
-          await logInteraction({
-            userInput: userInput,
-            aiResponse: fullResponse,
-            sessionKey: sessionId,
-            userKey: pendingUserMessage.sender?.id || 'unknown',
-            username: pendingUserMessage.sender?.name || '匿名用户',
-            channel: pendingUserMessage.channel || 'openclaw'
-          });
-          synced++;
-        }
-      }
-      
-      pendingUserMessage = messageData;
-      assistantMessages = [];
-      
+      userMessages.push(messageData);
       if (debug) {
         const input = extractUserInput(messageData);
         console.log(`    👤 用户输入：${input.substring(0, 80)}...`);
@@ -301,31 +279,33 @@ async function syncSession(filename, state, debug = false) {
       assistantMessages.push(messageData);
       if (debug) {
         const resp = extractAiResponse(messageData);
-        console.log(`    🤖 AI 回复片段 (累计：${assistantMessages.length})`);
+        console.log(`    🤖 AI 回复片段`);
       }
     } else if (role === 'toolResult') {
       if (debug) console.log(`    🔧 工具结果，跳过`);
     }
   }
   
-  if (pendingUserMessage && assistantMessages.length > 0) {
-    const fullResponse = assistantMessages.map(m => extractAiResponse(m)).filter(Boolean).join('\n');
-    const userInput = extractUserInput(pendingUserMessage);
+  // 配对 user 和 assistant 消息（按顺序）
+  const maxPairs = Math.min(userMessages.length, assistantMessages.length);
+  for (let i = 0; i < maxPairs; i++) {
+    const userInput = extractUserInput(userMessages[i]);
+    const aiResponse = assistantMessages.slice(i).map(m => extractAiResponse(m)).filter(Boolean).join('\n');
     
-    if (debug) {
-      console.log(`    处理最后一对`);
-    }
-    
-    if (userInput && !userInput.startsWith('/') && fullResponse) {
+    if (userInput && !userInput.startsWith('/') && aiResponse) {
       await logInteraction({
         userInput: userInput,
-        aiResponse: fullResponse,
+        aiResponse: aiResponse,
         sessionKey: sessionId,
-        userKey: pendingUserMessage.sender?.id || 'unknown',
-        username: pendingUserMessage.sender?.name || '匿名用户',
-        channel: pendingUserMessage.channel || 'openclaw'
+        userKey: userMessages[i].sender?.id || 'unknown',
+        username: userMessages[i].sender?.name || '匿名用户',
+        channel: userMessages[i].channel || 'openclaw'
       });
       synced++;
+      
+      if (debug) {
+        console.log(`    ✅ 已记录配对 ${i + 1}`);
+      }
     }
   }
   
