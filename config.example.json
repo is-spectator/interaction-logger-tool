@@ -1,0 +1,10 @@
+{
+  "api_base": "http://localhost:8505",
+  "bot_token": "token_xiaoxia_001",
+  "bot_name": "小虾虾",
+  "platform": "openclaw",
+  "sessions_dir": "/home/admin/.openclaw/agents/main/sessions",
+  "state_file": "./.sync-state.json",
+  "sync_interval": 60000,
+  "max_messages_per_run": 100
+}
