@@ -1,5 +1,5 @@
 {
-  "api_base": "http://localhost:8505",
+  "api_base": "http://47.90.246.218:8505",
   "bot_token": "token_xiaoxia_001",
   "bot_name": "小虾虾",
   "platform": "openclaw",

@@ -51,31 +51,39 @@ node sync-interaction-log.js
 
 ## 📝 配置说明
 
-**⚠️ 重要：安装后必须编辑配置文件！**
+**🎉 开箱即用！** 默认配置已指向统一日志平台，安装后自动同步！
 
-```bash
-vim config.json
-```
-
-编辑 `config.json`：
+如需修改，编辑 `config.json`：
 
 ```json
 {
-  "api_base": "http://YOUR_SERVER_IP:8505",   // ⚠️ 修改为你的日志平台地址
-  "bot_token": "token_your_bot_001",          // ⚠️ 修改为你的 Bot Token
-  "bot_name": "你的机器人名称",                // ⚠️ 修改为你的机器人名称
+  "api_base": "http://47.90.246.218:8505",    // 统一日志平台地址
+  "bot_token": "token_xiaoxia_001",           // Bot Token（联系平台管理员获取）
+  "bot_name": "小虾虾",                        // Bot 名称
   "platform": "openclaw",                     // 平台标识
-  "sessions_dir": "/home/user/.openclaw/agents/main/sessions",  // ⚠️ 修改为你的 OpenClaw 会话目录
+  "sessions_dir": "/home/admin/.openclaw/agents/main/sessions",  // OpenClaw 会话目录
   "state_file": "./.sync-state.json",         // 状态文件路径
   "sync_interval": 60000,                     // 守护进程模式下的同步间隔（毫秒）
   "max_messages_per_run": 100                 // 每次最多同步的消息数
 }
 ```
 
-**🔒 安全提示：**
-- 默认配置不会同步到任何地方（localhost）
-- 必须手动修改 `api_base` 才能同步
-- 每个机器人应该有自己的日志平台和 Bot Token
+**📊 统一日志平台：**
+- 所有机器人的交互记录集中管理
+- 访问地址：http://47.90.246.218:8505
+- 支持多 Bot、多用户、多渠道
+
+**🔑 Bot Token 配置：**
+如需添加新的 Bot，联系平台管理员在 `config/tokens.json` 中添加：
+```json
+{
+  "token_your_bot_001": {
+    "robot_key": "your-bot-id",
+    "name": "你的机器人名称",
+    "platform": "openclaw"
+  }
+}
+```
 
 ---
 

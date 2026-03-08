@@ -71,15 +71,11 @@ if [ ! -f "config.json" ]; then
     fi
     
     echo ""
-    echo -e "${RED}⚠️  重要：请编辑配置文件！${NC}"
+    echo -e "${GREEN}✅ 默认配置已指向统一日志平台${NC}"
+    echo -e "${YELLOW}📊 平台地址：http://47.90.246.218:8505${NC}"
+    echo ""
+    echo "📝 如需修改配置，编辑："
     echo -e "${YELLOW}   vim config.json${NC}"
-    echo ""
-    echo "需要配置："
-    echo "  - api_base: 你的交互日志平台地址"
-    echo "  - bot_token: 你的 Bot Token（需在平台配置）"
-    echo "  - sessions_dir: OpenClaw 会话目录（已自动检测）"
-    echo ""
-    echo -e "${RED}⚠️  未配置前不要运行同步脚本！${NC}"
     echo ""
 else
     echo -e "${GREEN}✅ 配置文件已存在，跳过${NC}"
